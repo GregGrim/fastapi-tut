@@ -1,0 +1,38 @@
+version: '3.1'
+
+networks:
+      playground:
+        driver: bridge
+
+
+volumes:
+  db_data:
+
+
+services:
+
+  db:
+    image: postgres:12
+    restart: always
+    environment:
+      POSTGRES_DB: fastapi_db
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      # PGDATA: /var/lib/postgresql/data/test/
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+
+#      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+#      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+    networks:
+      - playground
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - playground
