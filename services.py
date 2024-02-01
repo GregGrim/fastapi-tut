@@ -1,4 +1,5 @@
 import database
+import models
 
 
 def update_db():

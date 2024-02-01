@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.9'
 
 networks:
       playground:
@@ -8,11 +8,9 @@ networks:
 volumes:
   db_data:
 
-
 services:
-
   db:
-    image: postgres:12
+    image: postgres:14-alpine
     restart: always
     environment:
       POSTGRES_DB: fastapi_db
@@ -20,12 +18,9 @@ services:
       POSTGRES_PASSWORD: mypassword
       # PGDATA: /var/lib/postgresql/data/test/
     ports:
-      - "5432:5432"
+      - 5432:5432
     volumes:
-      - db_data:/var/lib/postgresql/data/
-
-#      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
-#      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+      - db_data:/var/lib/postgresql/data
     networks:
       - playground
 
