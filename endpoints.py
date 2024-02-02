@@ -5,6 +5,7 @@ import uvicorn
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
+import cache
 import db_session
 import schemas
 import services
@@ -12,8 +13,7 @@ import auth_utils
 
 import sqlalchemy.orm as orm
 
-
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+from constants import ACCESS_TOKEN_EXPIRE_MINUTES
 
 app = FastAPI()
 
@@ -57,6 +57,8 @@ async def login_for_access_token(
     access_token = auth_utils.create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
+    cache.add_token(access_token, user.id)
+
     return schemas.Token(access_token=access_token, token_type="bearer")
 
 
