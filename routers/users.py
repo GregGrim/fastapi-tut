@@ -31,6 +31,6 @@ async def delete_user(current_user: models.User = Depends(auth_utils.get_current
     return "user successfully deleted"
 
 
-@router.get("/me", response_model=models.User)
-async def read_users_me(current_user: models.User = Depends(auth_utils.get_current_user)):
+@router.get("/me", response_model=schemas.UserSchema)
+async def read_users_me(current_user: schemas.UserSchema = Depends(auth_utils.get_current_user)):
     return current_user

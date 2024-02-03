@@ -1,13 +1,13 @@
 import datetime as dt
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, EmailStr
 
 
 class BaseUser(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    username: str
-    hashed_password: str
+    username: str = Field(min_length=4, max_length=10)
+    hashed_password: str = Field(min_length=4)
     full_name: str
-    email: str
+    email: EmailStr | None = Field(default="example@email.com")
     phone_number: str
 
 
