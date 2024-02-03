@@ -11,7 +11,7 @@ class BaseUser(BaseModel):
     phone_number: str
 
 
-class User(BaseUser):
+class UserSchema(BaseUser):
     id: int
     date_created: dt.datetime
 

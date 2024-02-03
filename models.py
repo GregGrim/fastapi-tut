@@ -1,5 +1,3 @@
-from pydantic import BaseModel
-
 import datetime as dt
 import sqlalchemy as sa
 

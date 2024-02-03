@@ -19,3 +19,17 @@ def get_auth_redis_key(user_id: int, token: str) -> str:
 
 def token_exists(token: str, user_id: int) -> bool:
     return r_db.exists(get_auth_redis_key(user_id, token))
+
+
+def remove_token(token: str):
+    keys_to_delete = r_db.keys(f"auth:*:{token}")
+
+    for key in keys_to_delete:
+        r_db.delete(key)
+
+
+def remove_all_user_tokens(user_id: int):
+    keys_to_delete = r_db.keys(f"auth:{user_id}:*")
+
+    for key in keys_to_delete:
+        r_db.delete(key)
