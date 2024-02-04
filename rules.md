@@ -229,9 +229,10 @@ class ItemModel(BaseModel):
         server_default=sa.func.uuid_generate_v4(),
     )
     name = sa.Column(sa.Text())
+````
 
-Gateways
-
+#### Gateways
+```python
 class ItemGateway:
     def __init__(self, client: ...):
         self.client = client
