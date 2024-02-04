@@ -231,9 +231,9 @@ class ItemModel(BaseModel):
     name = sa.Column(sa.Text())
 ````
 
-#### Gateways
+#### Clients
 ```python
-class ItemGateway:
+class ItemGateway:  # ItemClient
     def __init__(self, client: ...):
         self.client = client
     
