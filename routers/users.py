@@ -1,36 +1,37 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Annotated
 
-import database
-import models
-import schemas
-import sqlalchemy.orm as orm
+from fastapi import APIRouter, Depends
 
-from utils import auth_utils, db_utils, cache
+from dependencies import get_user_use_case, get_auth_use_case
+from entities import User, CreateUser
+from services import oauth2_scheme
+from use_cases.auth_use_case import AuthUseCase
+from use_cases.user_use_cases import UserUseCase
+
 
 router = APIRouter(prefix="/users")
 
 
-@router.put("/", response_model=schemas.UserSchema)
-async def create_user(user: schemas.CreateUser, db: orm.Session = Depends(database.get_db)):
-    return await db_utils.create_user(user=user, db=db)
+@router.put("/signup", response_model=User)
+async def create_user(user: CreateUser, user_use_case: Annotated[UserUseCase, Depends(get_user_use_case)]):
+    return await user_use_case.add_user(user)
 
 
-@router.get("/get/{username}", response_model=schemas.UserSchema)
-async def get_user(username: str, db: orm.Session = Depends(database.get_db)):
-    user = await db_utils.get_user(username=username, db=db)
-    if user is None:
-        raise HTTPException(status_code=404, detail="user does not exist")
-    return user
+@router.get("/get/{username}", response_model=User)
+async def get_user(username: str, user_use_case: Annotated[UserUseCase, Depends(get_user_use_case)]):
+    return await user_use_case.get_user(username)
 
 
 @router.delete("/remove")
-async def delete_user(current_user: models.User = Depends(auth_utils.get_current_user),
-                      db: orm.Session = Depends(database.get_db)):
-    cache.remove_all_user_tokens(user_id=current_user.id)
-    await db_utils.delete_user(user=current_user, db=db)
-    return "user successfully deleted"
+async def delete_user(user_use_case: Annotated[UserUseCase, Depends(get_user_use_case)],
+                      auth_use_case: Annotated[AuthUseCase, Depends(get_auth_use_case)],
+                      token: Annotated[str, Depends(oauth2_scheme)]):
+    current_user = await auth_use_case.get_current_user(token=token)
+    return await user_use_case.delete_user(current_user)
 
 
-@router.get("/me", response_model=schemas.UserSchema)
-async def read_users_me(current_user: schemas.UserSchema = Depends(auth_utils.get_current_user)):
+@router.get("/me", response_model=User)
+async def read_users_me(auth_use_case: Annotated[AuthUseCase, Depends(get_auth_use_case)],
+                        token: Annotated[str, Depends(oauth2_scheme)]):
+    current_user = await auth_use_case.get_current_user(token=token)
     return current_user

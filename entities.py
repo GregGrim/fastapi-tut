@@ -1,5 +1,25 @@
 import datetime as dt
+
 from pydantic import BaseModel, ConfigDict, Field, EmailStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(case_sensitive=True, env_file='.env')
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    SECRET_KEY: str
+    JWT_ALGORITHM: str
+    DB_USER: str
+    DB_PASS: str
+    DB_HOST: str
+    DB_PORT: str
+    DB_NAME: str
+    # DATABASE_URL: PostgresDsn
+    REDIS_PORT: str
+    REDIS_HOST: str
+
+
+settings = Settings()
 
 
 class BaseUser(BaseModel):
@@ -11,7 +31,7 @@ class BaseUser(BaseModel):
     phone_number: str
 
 
-class UserSchema(BaseUser):
+class User(BaseUser):
     id: int
     date_created: dt.datetime
 
@@ -23,7 +43,3 @@ class CreateUser(BaseUser):
 class Token(BaseModel):
     access_token: str
     token_type: str
-
-
-class TokenData(BaseModel):
-    username: str | None = None
