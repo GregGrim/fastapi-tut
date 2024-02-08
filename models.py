@@ -10,7 +10,7 @@ class Base(DeclarativeBase):
 
 class UserModel(Base):
     __tablename__ = "users"
-    id = sa.Column(sa.Integer, primary_key=True, index=True)
+    id = sa.Column(sa.String, primary_key=True, server_default=sa.func.uuid_generate_v4())
     username = sa.Column(sa.String, index=True, unique=True)
     hashed_password = sa.Column(sa.String, index=True)
     full_name = sa.Column(sa.String, index=True)
