@@ -17,7 +17,7 @@ class CredentialsException(TutAppException):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"}
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
 
@@ -50,24 +50,20 @@ class UserDoesNotExistException(TutAppException):
 class UserCreationException(TutAppException):
     def __init__(self, detail: str):
         super().__init__(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=detail,
-            headers={}
+            status_code=status.HTTP_400_BAD_REQUEST, detail=detail, headers={}
         )
 
 
 async def app_exception_handler(request: Request, exc: TutAppException) -> JSONResponse:
     return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail},
-        headers=exc.headers
+        status_code=exc.status_code, content={"detail": exc.detail}, headers=exc.headers
     )
 
 
-async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+async def validation_exception_handler(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body})
+        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
     )
-
-

@@ -13,12 +13,16 @@ from exceptions import CredentialsException
 
 class TokenRepository:
     def __init__(self, redis_host: str, redis_port: str) -> None:
-        self.r_db = redis.Redis(host=redis_host, port=redis_port, db=0, decode_responses=True)
+        self.r_db = redis.Redis(
+            host=redis_host, port=redis_port, db=0, decode_responses=True
+        )
 
     def add_token(self, token: str, user_id: str):
         key = self.get_auth_redis_key(user_id, token)
         self.r_db.set(key, 1)
-        self.r_db.expire(key, timedelta(minutes=app_settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+        self.r_db.expire(
+            key, timedelta(minutes=app_settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        )
 
     def token_exists(self, token: str, user_id: str) -> bool:
         return bool(self.r_db.exists(self.get_auth_redis_key(user_id, token)))
@@ -44,12 +48,18 @@ class TokenRepository:
         else:
             expire = datetime.now(timezone.utc) + timedelta(minutes=15)
         to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, app_settings.SECRET_KEY, algorithm=app_settings.JWT_ALGORITHM)
+        encoded_jwt = jwt.encode(
+            to_encode, app_settings.SECRET_KEY, algorithm=app_settings.JWT_ALGORITHM
+        )
         return encoded_jwt
 
-    async def read_access_token(self, token: Annotated[str, Depends(oauth2_scheme)]) -> str:
+    async def read_access_token(
+        self, token: Annotated[str, Depends(oauth2_scheme)]
+    ) -> str:
         try:
-            payload = jwt.decode(token, app_settings.SECRET_KEY, algorithms=[app_settings.JWT_ALGORITHM])
+            payload = jwt.decode(
+                token, app_settings.SECRET_KEY, algorithms=[app_settings.JWT_ALGORITHM]
+            )
             user_id = payload.get("sub")
             if user_id is None:
                 raise CredentialsException()

@@ -16,14 +16,18 @@ class UserRepository(AbstractRepository):
         with Session(self.engine) as session:
             hashed_password = get_hash(sequence=user.hashed_password)
             user_data = user.model_dump()
-            user_data['hashed_password'] = hashed_password
+            user_data["hashed_password"] = hashed_password
             user = UserModel(**user_data)
             try:
                 session.add(user)
                 session.commit()
             except SQLAlchemyError as e:
-                error_message = str(e.__dict__['orig']) if 'orig' in e.__dict__ else str(e)
-                raise UserCreationException(detail=f"Failed to create the record: {error_message}")
+                error_message = (
+                    str(e.__dict__["orig"]) if "orig" in e.__dict__ else str(e)
+                )
+                raise UserCreationException(
+                    detail=f"Failed to create the record: {error_message}"
+                )
             session.refresh(user)
             return User.model_validate(user)
 
@@ -34,7 +38,9 @@ class UserRepository(AbstractRepository):
 
     async def get_one_by_username(self, username: str) -> User:
         with Session(self.engine) as session:
-            user = session.query(UserModel).filter(UserModel.username == username).first()
+            user = (
+                session.query(UserModel).filter(UserModel.username == username).first()
+            )
         return user
 
     async def delete_one(self, user_id: str) -> None:

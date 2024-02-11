@@ -1,10 +1,13 @@
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from pydantic import ValidationError
 
 from routers.users import router as users_router
 from routers.auth import router as auth_router
-from exceptions import app_exception_handler, TutAppException, validation_exception_handler
+from exceptions import (
+    app_exception_handler,
+    TutAppException,
+    validation_exception_handler,
+)
 
 
 def create_app() -> FastAPI:

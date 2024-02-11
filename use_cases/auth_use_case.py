@@ -6,14 +6,15 @@ from utils.crypto_utils import verify_sequence
 
 
 class AuthUseCase:
-
     def __init__(self, user_repo: UserRepository, token_repo: TokenRepository):
         self.user_repo = user_repo
         self.token_repo = token_repo
 
     async def authenticate_user(self, username: str, password: str) -> BaseUser:
         user = await self.user_repo.get_one_by_username(username)
-        if user and verify_sequence(source_sequence=password, target_sequence_hash=user.hashed_password):
+        if user and verify_sequence(
+            source_sequence=password, target_sequence_hash=user.hashed_password
+        ):
             return user
 
     async def get_current_user(self, token: str) -> User:

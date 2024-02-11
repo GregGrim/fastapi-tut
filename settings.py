@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(case_sensitive=True, env_file='.env')
+    model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     SECRET_KEY: str
     JWT_ALGORITHM: str
