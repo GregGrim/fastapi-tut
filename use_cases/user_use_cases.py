@@ -2,6 +2,7 @@ from entities import CreateUser
 from exceptions import UserDoesNotExistException
 from repositories.token_repository import TokenRepository
 from repositories.user_repository import UserRepository
+from utils.airflow_dag_trigerrer import trigger_dag
 
 
 class UserUseCase:
@@ -18,6 +19,10 @@ class UserUseCase:
             raise UserDoesNotExistException()
         return user
 
-    async def delete_user(self, user_id: str):
-        self.cache_repo.remove_all_user_tokens(user_id)
-        await self.user_repo.delete_one(user_id)
+    def delete_user(self, user_id: str):
+        # delegate all related processes to airflow dag
+        # self.cache_repo.remove_all_user_tokens(user_id)
+
+        return trigger_dag(dag_id="remove_user_dag", config={"user_id": user_id})
+
+        # await self.user_repo.delete_one(user_id)

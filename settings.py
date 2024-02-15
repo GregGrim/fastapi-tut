@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     # DATABASE_URL: PostgresDsn
     REDIS_PORT: str
     REDIS_HOST: str
+    AIRFLOW_PORT: str
+    AIRFLOW_USER: str
+    AIRFLOW_PASS: str
+    AIRFLOW_HOST: str
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")

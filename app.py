@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from starlette.middleware.cors import CORSMiddleware
 
 from routers.users import router as users_router
 from routers.auth import router as auth_router
@@ -14,6 +15,14 @@ def create_app() -> FastAPI:
     app = FastAPI()
     _add_routers(app)
     _add_exc_handlers(app)
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     return app
 
