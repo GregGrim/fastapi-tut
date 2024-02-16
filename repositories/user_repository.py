@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from exceptions import UserCreationException
+from exceptions import UserCreationException, UserDoesNotExistException
 from models import UserModel
 from entities import User, CreateUser
 from utils.crypto_utils import get_hash
@@ -12,7 +12,7 @@ class UserRepository(AbstractRepository):
     def __init__(self, engine):
         self.engine = engine
 
-    async def create_one(self, user: CreateUser) -> User:
+    def create_one(self, user: CreateUser) -> User:
         with Session(self.engine) as session:
             hashed_password = get_hash(sequence=user.hashed_password)
             user_data = user.model_dump()
@@ -31,20 +31,24 @@ class UserRepository(AbstractRepository):
             session.refresh(user)
             return User.model_validate(user)
 
-    async def get_one(self, user_id: str) -> User:
+    def get_one(self, user_id: str) -> User:
         with Session(self.engine) as session:
             user = session.query(UserModel).filter(UserModel.id == user_id).first()
-        return user
+            if not user:
+                raise UserDoesNotExistException()
+        return User.model_validate(user)
 
-    async def get_one_by_username(self, username: str) -> User:
+    def get_one_by_username(self, username: str) -> User:
         with Session(self.engine) as session:
             user = (
                 session.query(UserModel).filter(UserModel.username == username).first()
             )
-        return user
+            if not user:
+                raise UserDoesNotExistException()
+        return User.model_validate(user)
 
-    async def delete_one(self, user_id: str) -> None:
+    def delete_one(self, user_id: str) -> None:
         with Session(self.engine) as session:
-            user = await self.get_one(user_id)
+            user = self.get_one(user_id)
             session.delete(user)
             session.commit()

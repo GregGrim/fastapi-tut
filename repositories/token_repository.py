@@ -40,7 +40,7 @@ class TokenRepository:
     def get_auth_redis_key(self, user_id: str, token: str) -> str:
         return f"auth:{user_id}:{token}"
 
-    async def create_access_token(self, data: dict) -> str:
+    def create_access_token(self, data: dict) -> str:
         expires_delta = timedelta(minutes=app_settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         to_encode = data.copy()
         if expires_delta:
@@ -53,9 +53,7 @@ class TokenRepository:
         )
         return encoded_jwt
 
-    async def read_access_token(
-        self, token: Annotated[str, Depends(oauth2_scheme)]
-    ) -> str:
+    def read_access_token(self, token: Annotated[str, Depends(oauth2_scheme)]) -> str:
         try:
             payload = jwt.decode(
                 token, app_settings.SECRET_KEY, algorithms=[app_settings.JWT_ALGORITHM]

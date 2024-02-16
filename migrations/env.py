@@ -1,6 +1,6 @@
 # add your model's MetaData object here
 # for 'autogenerate' support
-from src import models
+import models
 
 from logging.config import fileConfig
 
@@ -9,7 +9,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.settings import app_settings
+from settings import app_settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

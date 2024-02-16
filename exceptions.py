@@ -54,6 +54,13 @@ class UserCreationException(TutAppException):
         )
 
 
+class LogCreationException(TutAppException):
+    def __init__(self, detail: str):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=detail, headers={}
+        )
+
+
 async def app_exception_handler(request: Request, exc: TutAppException) -> JSONResponse:
     return JSONResponse(
         status_code=exc.status_code, content={"detail": exc.detail}, headers=exc.headers

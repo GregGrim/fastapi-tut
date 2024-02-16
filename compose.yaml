@@ -46,6 +46,6 @@ services:
     image: adminer
     restart: always
     ports:
-      - "8081:8082"
+      - "8082:8080"
     networks:
       - my-playground
